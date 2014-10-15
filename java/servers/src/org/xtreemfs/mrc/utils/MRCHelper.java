@@ -482,7 +482,11 @@ public class MRCHelper {
         
         SysAttrs key = null;
         try {
-            key = SysAttrs.valueOf(keyString);
+            if (keyString.startsWith("quota")) {
+                key = SysAttrs.quota;
+            } else {
+                key = SysAttrs.valueOf(keyString);
+            }
         } catch (IllegalArgumentException exc) {
             throw new UserException(POSIXErrno.POSIX_ERROR_EINVAL, "unknown system attribute '" + keyString + "'");
         }
@@ -830,7 +834,7 @@ public class MRCHelper {
             if (file.getId() != 1)
                 throw new UserException(POSIXErrno.POSIX_ERROR_EINVAL, "quota must be set on volume root");
 
-            sMan.getVolumeInfo().setVolumeQuota((long) Long.valueOf(value), update);
+            sMan.getVolumeInfo().setQuota((long) Long.valueOf(value), keyString, update);
 
             break;
 

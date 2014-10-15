@@ -176,9 +176,13 @@ public class BabuDBVolumeInfo implements VolumeInfo {
     }
     
     @Override
-    public void setVolumeQuota(long quota, AtomicDBUpdate update) throws DatabaseException {
-        this.quota = quota;
-        sMan.setXAttr(1, StorageManager.SYSTEM_UID, BabuDBStorageManager.VOL_QUOTA_ATTR_NAME, String.valueOf(quota)
+    public void setQuota(long quota, String quotaAttrName, AtomicDBUpdate update) throws DatabaseException {
+
+        if (quotaAttrName.startsWith(BabuDBStorageManager.VOL_QUOTA_ATTR_NAME)) {
+            this.quota = quota;
+        }
+
+        sMan.setXAttr(1, StorageManager.SYSTEM_UID, quotaAttrName, String.valueOf(quota)
                 .getBytes(),
                 update);
         sMan.notifyVolumeChange(this);

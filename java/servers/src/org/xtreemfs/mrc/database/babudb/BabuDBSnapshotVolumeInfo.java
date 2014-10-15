@@ -102,7 +102,7 @@ public class BabuDBSnapshotVolumeInfo implements VolumeInfo {
     }
     
     @Override
-    public void setVolumeQuota(long quota, AtomicDBUpdate update) throws DatabaseException {
+    public void setQuota(long quota, String quotaAttrName, AtomicDBUpdate update) throws DatabaseException {
         sMan.throwException();
     }
 

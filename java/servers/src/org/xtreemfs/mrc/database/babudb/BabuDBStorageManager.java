@@ -95,7 +95,7 @@ public class BabuDBStorageManager implements StorageManager {
     
     protected static final String            VOL_ID_ATTR_NAME           = "volId";
     
-    protected static final String            VOL_QUOTA_ATTR_NAME        = "quota";
+    protected static final String            VOL_QUOTA_ATTR_NAME        = "quota.volume";
     
     protected static final int[]             ALL_INDICES                = { FILE_INDEX, XATTRS_INDEX, ACL_INDEX,
             FILE_ID_INDEX, VOLUME_INDEX                                };

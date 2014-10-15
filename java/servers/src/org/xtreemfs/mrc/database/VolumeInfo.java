@@ -139,9 +139,12 @@ public interface VolumeInfo {
      * 
      * @param quota
      *            quota in bytes
+     * 
+     * @param quotaAttrName
+     *            name of the quota attribute
      * @throws DatabaseException
      */
-    public void setVolumeQuota(long quota, AtomicDBUpdate update) throws DatabaseException;
+    public void setQuota(long quota, String quotaAttrName, AtomicDBUpdate update) throws DatabaseException;
 
     /**
      * Adds <code>diff</code> to the current volume size.

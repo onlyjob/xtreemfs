@@ -394,19 +394,45 @@ bool SetDefaultSP(const string& xctl_file,
 }
 
 // Sets the volume quota
-bool SetVolumeQuota(const string& xctl_file,
+bool SetQuota(const string& xctl_file,
                   const string& path,
                   const variables_map& vm) {
 
-  const string quota = vm["set-quota"].as<string>();
+  if (vm.count("quota") == 0) {
+    cerr << "quota must be set" << endl;
+    return false;
+  }
+
+  const string quota = vm["quota"].as<string>();
+
+  string quotaType;
+  string quotaName = "";
+  if (vm.count("user") > 0) {
+    quotaType = "user";
+    quotaName = vm["user"].as<string>();
+  } else if (vm.count("group") > 0) {
+    quotaType = "group";
+    quotaName = vm["group"].as<string>();
+  } else if (vm.count("volume") > 0) {
+    quotaType = "volume";
+  } else {
+    cerr << "user, group or volume must be set" << endl;
+    return false;
+  }
 
   Json::Value request(Json::objectValue);
-  request["operation"] = "setVolumeQuota";
+  request["operation"] = "setQuota";
   request["path"] = path;
   request["quota"] = quota;
+  request["quotaType"] = quotaType;
+  request["quotaName"] = quotaName;
   Json::Value response;
   if (executeOperation(xctl_file, request, &response)) {
-    cout << "Set volume quota to " << quota << "." << endl;
+    if (quotaType == "volume") {
+      cout << "Set volume quota to " << quota << "." << endl;
+    } else {
+      cout << "Set quota of " << quotaType << " " << quotaName << " to " << quota << "." << endl;
+    }
     return true;
   } else {
     cerr << "FAILED" << endl;
@@ -1068,8 +1094,12 @@ int main(int argc, char **argv) {
        "adds/modifies an ACL entry, format: u|g|m|o:[<name>]:[<rwx>|<octal>]")
       ("del-acl", value<string>(),
        "removes an ACL entry, format: u|g|m|o:<name>")
-      ("set-quota", value<string>(),
-       "sets the volume quota in bytes (set quota to 0 to disable the quota), format: <value>M|G|T");
+      ("set-quota", "sets the quota for user, group or volume")
+      ("user", value<string>(),"user quota")
+      ("group", value<string>(),"group quota")
+      ("volume","volume quota")
+      ("quota", value<string>(),
+          "quota size in bytes (set quota to 0 to disable the quota), format: <value>M|G|T");
 
   options_description snapshot_desc("Snapshot Options");
   snapshot_desc.add_options()
@@ -1180,6 +1210,18 @@ int main(int argc, char **argv) {
       return 1;
     }
   }
+  if (vm.count("user") > 0 ||
+      vm.count("group") > 0 ||
+      vm.count("volume") > 0 ||
+      vm.count("quota") > 0) {
+    if (vm.count("set-quota") == 0) {
+      cerr << "--user, --group, --volume or --quota are only allowed in conjunction with --set-quota" << endl
+           << endl
+           << "Usage: xtfsutil <path>" << endl
+           << desc << endl;
+      return 1;
+    }
+  }
 
   char* real_path_cstr = realpath(option_path.c_str(), NULL);
   if (!real_path_cstr) {
@@ -1249,7 +1291,7 @@ int main(int argc, char **argv) {
   } else if (vm.count("errors") > 0) {
     return ShowErrors(xctl_file, path_on_volume, vm) ? 0 : 1;
   } else if (vm.count("set-quota") > 0) {
-	return SetVolumeQuota(xctl_file, path_on_volume, vm) ? 0 : 1;
+	  return SetQuota(xctl_file, path_on_volume, vm) ? 0 : 1;
   } else {
     return getattr(xctl_file, path_on_volume) ? 0 : 1;
   }

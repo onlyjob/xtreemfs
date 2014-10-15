@@ -112,8 +112,8 @@ void XtfsUtilServer::ParseAndExecute(const xtreemfs::pbrpc::UserCredentials& uc,
       OpCreateDeleteSnapshot(uc, input, &result);
     } else if (op_name == "setRemoveACL") {
       OpSetRemoveACL(uc, input, &result);
-    } else if (op_name == "setVolumeQuota") {
-      OpSetVolumeQuota(uc, input, &result);
+    } else if (op_name == "setQuota") {
+      OpSetQuota(uc, input, &result);
     } else {
       file->set_last_result(
           "{ \"error\":\"Unknown operation '" + op_name + "'.\" }\n");
@@ -632,7 +632,7 @@ void XtfsUtilServer::OpSetRemoveACL(
   (*output)["result"] = Json::Value(Json::objectValue);
 }
 
-void XtfsUtilServer::OpSetVolumeQuota(
+void XtfsUtilServer::OpSetQuota(
 	    const xtreemfs::pbrpc::UserCredentials& uc,
 	    const Json::Value& input,
 	    Json::Value* output) {
@@ -646,6 +646,8 @@ void XtfsUtilServer::OpSetVolumeQuota(
 
   const string path = input["path"].asString();
   const long quota = parseByteNumber(input["quota"].asString());
+  const string quotaType = input["quotaType"].asString();
+  const string quotaName = input["quotaName"].asString();
 
   if (quota == -1) {
     (*output)["error"] = Json::Value(
@@ -659,7 +661,13 @@ void XtfsUtilServer::OpSetVolumeQuota(
     return;
   }
 
-  volume_->SetXAttr(uc, path, "xtreemfs.quota",
+  stringstream xAttrName ;
+  xAttrName << "xtreemfs.quota." << quotaType;
+  if (quotaType == "group" || quotaType == "user") {
+    xAttrName << "." << quotaName;
+  }
+
+  volume_->SetXAttr(uc, path, xAttrName.str(),
       boost::lexical_cast<std::string>(quota), xtreemfs::pbrpc::XATTR_FLAGS_REPLACE);
   (*output)["result"] = Json::Value(Json::objectValue);
 }

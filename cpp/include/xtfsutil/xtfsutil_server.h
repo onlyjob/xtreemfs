@@ -221,7 +221,7 @@ class XtfsUtilServer {
                       const Json::Value& input,
                       Json::Value* output);
 
-  void OpSetVolumeQuota(const xtreemfs::pbrpc::UserCredentials& uc,
+  void OpSetQuota(const xtreemfs::pbrpc::UserCredentials& uc,
                       const Json::Value& input,
                       Json::Value* output);
 

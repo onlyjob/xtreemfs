@@ -1,0 +1,5 @@
+xtreemfs (1.5+dfsg-1) unstable; urgency=low
+
+  * Initial release (Closes: #______).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 27 Oct 2014 21:33:45 +1100

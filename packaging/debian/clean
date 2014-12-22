@@ -1,0 +1,9 @@
+cpp/generated/*/*.pb.cc
+cpp/generated/*/*.pb.h
+cpp/generated/pbrpc/*.h
+cpp/generated/xtreemfs/*
+java/foundation/src/org/xtreemfs/foundation/pbrpc/generatedinterfaces/*.java
+java/servers/src/org/xtreemfs/pbrpc/generatedinterfaces/*.java
+etc/init.d/xtreemfs-dir
+etc/init.d/xtreemfs-mrc
+etc/init.d/xtreemfs-osd

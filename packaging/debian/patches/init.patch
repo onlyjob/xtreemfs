@@ -1,0 +1,20 @@
+Last-Update: 2014-12-22
+Forwarded: no
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Description: SysV init script corrections
+
+--- a/etc/init.d/xtreemfs-service.template
++++ b/etc/init.d/xtreemfs-service.template
+@@ -5,10 +5,10 @@
+ # Required-Start:    $network $remote_fs
+ # Required-Stop:     $network $remote_fs
+ # Should-Start:      @SHOULD_START@
+ # Should-Stop:       $null
+-# Default-Start:     3 5
+-# Default-Stop:      0 1 2 6
++# Default-Start:     2 3 4 5
++# Default-Stop:      0 1 6
+ # Short-Description: XtreemFS @SHORT_SERVICE_NAME@
+ # Description:       XtreemFS @LONG_SERVICE_NAME@ (@SHORT_SERVICE_NAME@). http://www.xtreemfs.org/
+ ### END INIT INFO
+ 

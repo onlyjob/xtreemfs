@@ -1,0 +1,349 @@
+Last-Update: 2014-12-23
+Forwarded: https://github.com/xtreemfs/xtreemfs/pull/360
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Description: spelling corrections and lintianisation
+
+--- a/man/man1/mount.xtreemfs.1
++++ b/man/man1/mount.xtreemfs.1
+@@ -19,13 +19,13 @@
+ 
+ .TP
+ Fuse Options:
+ .TP
+-.B "-f, --foreground"
++.B "-f, \--foreground"
+ Do not fork into background.
+ .TP
+-.BI "-o, --fuse_option " option
+-Passes -o=<\fIoption\fR> to Fuse.
++.BI "-o, \--fuse_option " option
++Passes \-o=<\fIoption\fR> to Fuse.
+ 
+ .TP
+ ACL and extended attributes Support:
+ .TP
+@@ -39,18 +39,18 @@
+ 
+ .TP
+ General Options:
+ .TP
+-.BI "-d, --log-level " EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG
++.BI "-d, \--log-level " EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG
+ The log level of the XtreemFS client.
+ .TP
+-.B "-h, --help"
++.B "-h, \--help"
+ Print help and exit.
+ .TP
+-.BI "-l, --log-file-path " log_file_path
++.BI "-l, \--log-file-path " log_file_path
+ Path to log file.
+ .TP
+-.BI "-V, --version"
++.BI "-V, \--version"
+ Shows the version number.
+ 
+ .TP
+ Optimizations:
+@@ -182,8 +182,8 @@
+ However, this might lead to inconsistencies if different clients access a file concurrently, as requests might be serviced from the local page cache.
+ 
+ If
+ .B "-o xtreemfs_acl"
+-or a gridmap file is used, the Fuse default permissions check will be disabled. In consequence, the Fuse Option "-o default_permissions" will not be sent to Fuse. In these cases, the content of the metadata cache may be spoofed by users although they are not allowed to list the directory or retrieve the stat information of a file.
++or a gridmap file is used, the Fuse default permissions check will be disabled. In consequence, the Fuse Option "\-o default_permissions" will not be sent to Fuse. In these cases, the content of the metadata cache may be spoofed by users although they are not allowed to list the directory or retrieve the stat information of a file.
+ 
+ .SH AVAILABILITY
+ The mount.xtreemfs command is part of the XtreemFS-client package and is available from \fIhttp://www.xtreemfs.org\fP.
+--- a/man/man1/xtfs_scrub.1
++++ b/man/man1/xtfs_scrub.1
+@@ -6,14 +6,14 @@
+ .br
+ 
+ .SH DESCRIPTION
+ .I xtfs_scrub
+-performs a consistency check of each file in a given volume. If run without -repair or -delete it will only perform checks and report problems. Th scrubber checks for file if the file size on the OSDs is stored on the MRC and fixes inconsistencies if run in the -repair mode. In addition, the scrubber checks the checksum for each object of a file if the checksums are enabled on the OSD.
++performs a consistency check of each file in a given volume. If run without \-repair or \-delete it will only perform checks and report problems. Th scrubber checks for file if the file size on the OSDs is stored on the MRC and fixes inconsistencies if run in the \-repair mode. In addition, the scrubber checks the checksum for each object of a file if the checksums are enabled on the OSD.
+ 
+-For replicated files the scrubber will check each replica for objects with inccorect checksum. In addition, it marks full replicas that successfully copied all objects as "complete" replicas. In the -repair mode, the scrubber will also replace replicas that contain ramoved OSDs. An OSD must be marked as dead/removed with the xtfs_chstatus tool, otherwise the scrubber will consider the OSD as temporarily unavailable and won't replace the replica.
++For replicated files the scrubber will check each replica for objects with inccorect checksum. In addition, it marks full replicas that successfully copied all objects as "complete" replicas. In the \-repair mode, the scrubber will also replace replicas that contain ramoved OSDs. An OSD must be marked as dead/removed with the xtfs_chstatus tool, otherwise the scrubber will consider the OSD as temporarily unavailable and won't replace the replica.
+ 
+ .SH EXAMPLE USAGE
+-.B "xtfs_scrub -dir pbrpc://localhost:32638 myVolume
++.B "xtfs_scrub \-dir pbrpc://localhost:32638 myVolume
+ .PP
+ Scrubs all files in the volume named 'myVolume' registered at the Directory Service 'pbrpc://localhost:32638'.
+ 
+ .SH OPTIONS
+@@ -28,18 +28,20 @@
+ \fB\-delete
+ Deletes files where the objects are lost because they were stored on a failed/removed OSD.
+ .TP
+ \fB-dirs \fI<uri(,uri...)>
+-Specifies the directory services to use (e.g. 'pbrpc://localhost:32638,pbrpc://myDir.com:32638') (comma-separated). If no URI is specified, URIs and security settings are taken from '/etc/xos/xtreemfs/default_dir'. In case of a secured URI ('pbrpcs://...' or 'pbrpcg://...'), it is necessary to also specify SSL settings.
++Specifies the directory services to use (e.g. 'pbrpc://localhost:32638,pbrpc://myDir.com:32638') (comma-separated).
++If no URI is specified, URIs and security settings are taken from '/etc/xos/xtreemfs/default_dir'.
++In case of a secured URI ('pbrpcs://...' or 'pbrpcg://...'), it is necessary to also specify SSL settings.
+ .TP
+ \fB-h/--help
+ Shows usage info.
+ .TP
+ \fB\-repair
+ Repairs inconsistent file sizes and replace replicas on failed/removed OSD.
+ .TP
+ \fB\-silent
+-Hides detailed informations about the scrubbed files.
++Hides detailed information about the scrubbed files.
+ .TP
+ \fB-t \fI<trusted_CAs>
+ Path to a PKCS#12 file containing a set of certificates from trusted certification authorities. These certificates will be used to authenticate the MRC. Must be present when MRC URL starts with pbrpcs:// or pbrpcg://.
+ .TP
+--- a/man/man1/xtfsutil.1
++++ b/man/man1/xtfsutil.1
+@@ -19,16 +19,16 @@
+ .TP
+ .B "xtfsutil xtfs-mount/somedir/myfile"
+ .br
+ .TP
+-Add another replica to the replicated file "/somedir/myfile" which will be created on an automatically chosen OSD. If the file is not replicated yet, set a replication policy for the file first (see option -r / \-\-set-replication-policy). Or set a default replication policy for future files.
++Add another replica to the replicated file "/somedir/myfile" which will be created on an automatically chosen OSD. If the file is not replicated yet, set a replication policy for the file first (see option \-r / \-\-set-replication-policy). Or set a default replication policy for future files.
+ .TP
+-.B "xtfsutil --add-replica AUTO xtfs-mount/somedir/myfile"
++.B "xtfsutil \--add-replica AUTO xtfs-mount/somedir/myfile"
+ .br
+ .TP
+ Set the default replication policy to "WqRq" and a default replication factor of 3 for the mounted volume:
+ .TP
+-.B "xtfsutil --set-drp --replication-policy WqRq --replication-factor 3 xtfs-mount/"
++.B "xtfsutil \--set-drp \--replication-policy WqRq \--replication-factor 3 xtfs-mount/"
+ 
+ .SH OPTIONS
+ 
+ .TP
+@@ -132,9 +132,9 @@
+ Changes the value of a policy attribute for a volume. See the XtreemFS user guide for attribute names.
+ 
+ Policy attributes can be removed by setting an empty value, e.g.:
+ 
+- $> xtfsutil --set-pattr 1001.domains --value "" /xtreemfs
++ $> xtfsutil \--set-pattr 1001.domains \--value "" /xtreemfs
+ 
+ .TP
+ \fB\-\-list-pattrs
+ Lists all policy attributes that are set on a volume.
+@@ -156,9 +156,9 @@
+ Creates a snapshot of the volume/directory with the name \fIname\fP. If \fIname\fP is empty, the current server time will be used as snapshot name.
+ 
+ .TP
+ \fB\-\-create-snapshot-non-recursive \fP[\fIname\fP]
+-Same as --create-snapshot but excludes any subdirectories.
++Same as \--create-snapshot but excludes any subdirectories.
+ 
+ .TP
+ \fB\-\-delete-snapshot \fP[\fIname\fP]
+ Deletes the snapshot with the name \fIname\fP.
+@@ -184,9 +184,9 @@
+ Removes the replica on the OSD with the specified UUID.
+ 
+ .TP
+ \fB\-r, \-\-set-replication-policy ronly|WqRq|WaRa|none (the aliases readonly|quorum|all are also allowed)
+-Sets the replication policy for a file. Mode cane only be changed when a file has no replicas. See --replication-policy for values.
++Sets the replication policy for a file. Mode cane only be changed when a file has no replicas. See \--replication-policy for values.
+ 
+ .SH "SEE ALSO"
+ .BR lsfs.xtreemfs (1),
+ .BR mkfs.xtreemfs (1),
+--- a/java/servers/src/org/xtreemfs/common/monitoring/StatusMonitor.java
++++ b/java/servers/src/org/xtreemfs/common/monitoring/StatusMonitor.java
+@@ -53,9 +53,9 @@
+      */
+     private SnmpAdaptorServer    snmpAdaptor       = null;
+ 
+     /**
+-     * The MIB containing all SNMP related informations
++     * The MIB containing all SNMP related information
+      */
+     private XTREEMFS_MIB         xtfsmib           = null;
+ 
+     /**
+--- a/java/servers/src/org/xtreemfs/osd/replication/ObjectDissemination.java
++++ b/java/servers/src/org/xtreemfs/osd/replication/ObjectDissemination.java
+@@ -144,9 +144,9 @@
+         if (file == null) { // file not in progress
+             /*
+              * Optimization: Use a cache of last completed files, so no new instance must be created every
+              * time. But use file from cache only if the xLoc has not changed. Otherwise it could be not
+-             * guaranteed, that the informations in the ReplicatingFile instance are correct (up-to-date).
++             * guaranteed, that the information in the ReplicatingFile instance are correct (up-to-date).
+              */
+             file = this.lastCompletedFilesCache.get(fileID);
+             if (file == null || (file != null && file.hasXLocChanged(xLoc))) { // create new one
+                 file = new ReplicatingFile(fileID, xLoc, capability, cow, master);
+--- a/java/servers/src/org/xtreemfs/osd/storage/HashStorageLayout.java
++++ b/java/servers/src/org/xtreemfs/osd/storage/HashStorageLayout.java
+@@ -1161,9 +1161,9 @@
+                 for (File ch : dir.listFiles()) {
+                     // handle the directories (hash and fileName)
+                     if (ch != null && ch.isDirectory()) {
+                         l.status.push(currentDir + "/" + ch.getName());
+-                        // get informations from the objects
++                        // get information from the objects
+                     } else if (ch != null && ch.isFile() && !ch.getName().contains(".")
+                             && !ch.getName().endsWith(".ser")) {
+                         // get the file metadata
+                         try {
+--- a/java/servers/src/org/xtreemfs/sandbox/dir_replication_test.java
++++ b/java/servers/src/org/xtreemfs/sandbox/dir_replication_test.java
+@@ -690,9 +690,9 @@
+ //        usage();
+ //    }
+ //       
+ //    /**
+-//     *  Prints out usage informations and terminates the application.
++//     *  Prints out usage information and terminates the application.
+ //     */
+ //    public static void usage(){
+ //        Logging.logMessage(Logging.LEVEL_INFO,masterClient,
+ //                "dir_replication_test <participant_address:port>,<participant_address:port>[,<participant_address:port>]");
+--- a/java/servers/src/org/xtreemfs/sandbox/mrc_replication_test.java
++++ b/java/servers/src/org/xtreemfs/sandbox/mrc_replication_test.java
+@@ -518,9 +518,9 @@
+ //        usage();
+ //    }
+ //
+ //    /**
+-//     *  Prints out usage informations and terminates the application.
++//     *  Prints out usage information and terminates the application.
+ //     */
+ //    public static void usage(){
+ //        System.out.println("dir_replication_test <master_address:port> <slave_address:port>[,<slave_address:port>]");
+ //        System.out.println("  "+"<master_address:port> address of the DIR that has to be declared to master");
+--- a/java/servers/src/org/xtreemfs/utils/xtfs_cleanup_osd.java
++++ b/java/servers/src/org/xtreemfs/utils/xtfs_cleanup_osd.java
+@@ -241,9 +241,9 @@
+         System.exit(1);
+     }
+ 
+     /**
+-     * Prints out usage informations and terminates the application.
++     * Prints out usage information and terminates the application.
+      */
+     public static void usage(Map<String, CliOption> options) {
+ 
+         System.out.println("usage: xtfs_cleanup [options] uuid:<osd_uuid>\n");
+--- a/man/man1/mkfs.xtreemfs.1
++++ b/man/man1/mkfs.xtreemfs.1
+@@ -17,9 +17,9 @@
+ .br
+ .TP
+ Create a volume with a default striping width of 2 meaning files will be always striped across 2 OSDs.
+ .TP
+-.B "mkfs.xtreemfs -p RAID0 -w 2 remote.mrc.machine/MyVolume"
++.B "mkfs.xtreemfs \-p RAID0 \-w 2 remote.mrc.machine/MyVolume"
+ 
+ .SH OPTIONS
+ 
+ .TP
+@@ -30,39 +30,39 @@
+ 
+ .TP
+ Volume Options:
+ .TP
+-.BI "-m, --mode " mode
++.BI "-m, \--mode " mode
+ Mode of the volume's root directory (777 by default).
+ .TP
+-.BI "-u, --owner-username " username
++.BI "-u, \--owner-username " username
+ Owner of the new volume (by default it is the username of the effective user id).
+ .TP
+-.BI "-g, --owner-groupname " groupname
++.BI "-g, \--owner-groupname " groupname
+ Owning group of the new volume (by default its the groupname of the effective 
+ group id).
+ .TP
+-.BI "-a, --access-control-policy " NULL|POSIX|VOLUME
++.BI "-a, \--access-control-policy " NULL|POSIX|VOLUME
+ Access Control Policy of the volume. By default
+ .IR POSIX .
+ 
+ .TP
+ Striping Policy Options:
+ .TP
+-.BI "-p, --striping-policy " RAID0
++.BI "-p, \--striping-policy " RAID0
+ Default striping policy for new files. Currently only the policy
+ .I RAID0
+ is available. Please do not get confused by the name
+ .IR RAID0 .
+ If the default
+-.I --striping-policy-width
++.I \--striping-policy-width
+ of 1 is used, all objects of a file are stored on the same OSD and there is no higher failure probability compared to storing files on other file systems. 
+ 
+ .TP
+-.BI "-s, --striping-policy-stripe-size " stripe-size
++.BI "-s, \--striping-policy-stripe-size " stripe-size
+ Stripe size in kB.
+ .TP
+-.BI "-w, --striping-policy-width " stripe-width
++.BI "-w, \--striping-policy-width " stripe-width
+ Number of OSDs (stripes) per replica.
+ 
+ .TP
+ Volume Attributes:
+@@ -72,25 +72,25 @@
+ .IR name=value ,
+ e.g. "chown_non_root=true".
+ .TP
+ .B "--chown-non-root"
+-Shortcut for --volume-attribute chown_non_root=true. If this attribute is not set, regular users (everybody except root) are not allowed to change the ownership of their
++Shortcut for \--volume-attribute chown_non_root=true. If this attribute is not set, regular users (everybody except root) are not allowed to change the ownership of their
+ .B own
+ files.
+ 
+ .TP
+ General Options:
+ .TP
+-.BI "-d, --log-level " EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG
++.BI "-d, \--log-level " EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG
+ The log level of the XtreemFS client.
+ .TP
+-.B "-h, --help"
++.B "-h, \--help"
+ Print help and exit.
+ .TP
+-.BI "-l, --log-file-path " log_file_path
++.BI "-l, \--log-file-path " log_file_path
+ Path to log file.
+ .TP
+-.BI "-V, --version"
++.BI "-V, \--version"
+ Shows the version number.
+ 
+ .TP
+ SSL Options:
+--- a/snmp/xtreemfs-mib.txt
++++ b/snmp/xtreemfs-mib.txt
+@@ -49,9 +49,9 @@
+ 
+    -- a truth value
+       Boolean ::=   INTEGER { true(1), false(2) }
+ 
+-	-- GROUP general: It represents informations that
++	-- GROUP general: It represents information that
+ 	-- all services (DIR, MRC, OSD) have in common.
+ 	jvmUsedMemory OBJECT-TYPE
+ 		SYNTAX Long
+ 		MAX-ACCESS read-only
+@@ -159,9 +159,9 @@
+       DESCRIPTION
+          "Returns the UUID of the service."
+    ::= { general 13 } 
+ 
+-	-- GROUP dir: It represents informations that
++	-- GROUP dir: It represents information that
+ 	-- related to the DIR.
+ 	addressMappingCount OBJECT-TYPE
+ 		SYNTAX INTEGER
+ 		MAX-ACCESS read-only

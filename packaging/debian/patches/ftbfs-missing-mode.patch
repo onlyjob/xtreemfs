@@ -1,0 +1,29 @@
+Last-Update: 2014-12-22
+Forwarded: not-needed
+Bug-Upsteam: https://github.com/xtreemfs/xtreemfs/issues/361
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Description: fix FTBFS with "-D_FORTIFY_SOURCE=2"
+ S_IWUSR or 0644 ??
+~~~~
+ In file included from /usr/include/fcntl.h:279:0,
+                  from /mnt/tmp/src/xtreemfs/XtreemFS-1.5/cpp/src/xtfsutil/xtfsutil.cpp:10:
+ In function ‘int open(const char*, int, ...)’,
+     inlined from ‘bool executeOperation(const string&, const Json::Value&, Json::Value*)’ at /mnt/tmp/src/xtreemfs/XtreemFS-1.5/cpp/src/xtfsutil/xtfsutil.cpp:45:45:
+ /usr/include/x86_64-linux-gnu/bits/fcntl2.h:50:26: error: call to ‘__open_missing_mode’ declared with attribute error: open with O_CREAT in second argument needs 3 arguments
+     __open_missing_mode ();
+                           ^
+ CMakeFiles/xtfsutil.dir/build.make:57: recipe for target 'CMakeFiles/xtfsutil.dir/src/xtfsutil/xtfsutil.cpp.o' failed
+~~~~
+--- a/cpp/src/xtfsutil/xtfsutil.cpp
++++ b/cpp/src/xtfsutil/xtfsutil.cpp
+@@ -41,9 +41,9 @@
+                       Json::Value* response) {
+   Json::FastWriter writer;
+   const string json_out = writer.write(request);
+ 
+-  int fd = open(xctl_file.c_str(), O_CREAT | O_RDWR);
++  int fd = open(xctl_file.c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+   if (fd == -1) {
+     cerr << "Cannot open xctl file: " << strerror(errno) << endl;
+     unlink(xctl_file.c_str());
+     return false;

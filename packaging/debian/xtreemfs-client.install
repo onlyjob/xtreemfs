@@ -1,0 +1,6 @@
+usr/bin/lsfs.xtreemfs
+usr/bin/mkfs.xtreemfs
+usr/bin/mount.xtreemfs
+usr/bin/rmfs.xtreemfs
+#usr/bin/umount.xtreemfs
+usr/bin/xtfsutil

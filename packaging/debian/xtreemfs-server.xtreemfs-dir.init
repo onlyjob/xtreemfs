@@ -1,0 +1,161 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          xtreemfs-dir
+# Required-Start:    $network $remote_fs
+# Required-Stop:     $network $remote_fs
+# Should-Start:      $null
+# Should-Stop:       $null
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: XtreemFS DIR
+# Description:       XtreemFS Directory Service (DIR). http://www.xtreemfs.org/
+### END INIT INFO
+
+# Source function library.
+if [ -e /lib/lsb/init-functions ]; then
+    . /lib/lsb/init-functions
+else
+    . /etc/init.d/functions
+fi
+
+XTREEMFS_USER=xtreemfs
+
+PID=/var/run/xtreemfs_dir.pid
+
+CONFIG=/etc/xos/xtreemfs/dirconfig.properties
+
+LOG=/var/log/xtreemfs/dir.log
+
+if [ -z $JAVA_HOME ]; then
+    export JAVA_HOME=/usr
+fi
+JAVA_CALL="$JAVA_HOME/bin/java -ea -cp /usr/share/java/XtreemFS.jar:/usr/share/java/BabuDB.jar:/usr/share/java/Flease.jar:/usr/share/java/protobuf.jar:/usr/share/java/Foundation.jar:/usr/share/java/jdmkrt.jar:/usr/share/java/jdmktk.jar:/usr/share/java/commons-codec.jar"
+
+# For SELinux we need to use 'runuser' not 'su'
+if [ -x "/sbin/runuser" ]; then
+    SU="/sbin/runuser"
+else
+    SU="/bin/su"
+fi
+
+pre_check() {
+    exists=`grep -c $XTREEMFS_USER /etc/passwd`
+    if [ $exists -eq 0 ]; then
+        echo "User $XTREEMFS_USER does not exist. Create it first."
+        exit 1
+    fi
+    log_directory=`dirname $LOG`
+    if [ ! -e $log_directory ]; then
+        echo "Directory for logfiles $log_directory does not exist. Create it first."
+        exit 1
+    fi
+}
+
+start() {
+    if [ -f $PID ]; then
+        PROCPID=`cat $PID`
+        if [ -e /proc/$PROCPID ];then
+            echo "XtreemFS Directory Service (DIR) already started"
+            return 0
+        else
+            echo -n "Previous XtreemFS Directory Service (DIR) was not shutdown correctly (PID $PROCPID). "
+        fi
+    fi
+
+    pre_check
+
+    echo >> $LOG
+    date >> $LOG
+    echo -e "Starting XtreemFS Directory Service (DIR)...\n\n" >> $LOG
+
+    echo -n "Starting XtreemFS Directory Service (DIR)..."
+    $SU -s /bin/bash $XTREEMFS_USER -c "$JAVA_CALL org.xtreemfs.dir.DIR $CONFIG" >> $LOG 2>&1 &
+    PROCPID=$!
+    echo $PROCPID > $PID
+    sleep 1s
+
+    if [ -e /proc/$PROCPID ]; then
+        echo "success"
+    else
+        echo "failed"
+        return 1
+    fi
+
+    return 0
+}
+
+stop() {
+    result=0
+    if [ -f $PID ]; then
+        echo -n "Stopping XtreemFS Directory Service (DIR)..."
+        killproc -p $PID $SU
+        result=$?
+        if [ $result -eq 0 ]; then
+            rm -f $PID
+            echo "success"
+        else
+            echo "failed"
+        fi
+    else
+        echo "XtreemFS Directory Service (DIR) is not running"
+    fi
+
+    return $result
+}
+
+status() {
+    if [ -f $PID ]; then
+        PROCPID=`cat $PID`
+        if [ ! -e /proc/$PROCPID ]; then
+            echo "XtreemFS Directory Service (DIR) has crashed"
+            return 1
+        else
+            echo "XtreemFS Directory Service (DIR) is running"
+            return 0
+        fi
+    else
+        echo "XtreemFS Directory Service (DIR) is not running"
+        return 3
+    fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        result=$?
+        ;;
+    stop)
+        stop
+        result=$?
+        ;;
+    status)
+        status
+        result=$?
+        ;;
+    reload)
+        result=0
+        ;;
+    restart)
+        stop && sleep 1 && start
+        result=$?
+        ;;
+    try-restart)
+        ## Stop the service and if this succeeds (i.e. the
+        ## service was running before), start it again.
+        $0 status >/dev/null
+        if [ $? -eq 0 ]; then
+          $0 restart
+          result=$?
+        else
+          result=0
+        fi
+        ;;
+    *)
+        echo -e "Usage: $0 {start|stop|restart|reload|status|try-restart}\n"
+        result=1
+        ;;
+esac
+
+exit $result

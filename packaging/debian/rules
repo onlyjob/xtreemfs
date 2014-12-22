@@ -1,0 +1,42 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all,-pie
+
+# minimise needless linking
+#export DEB_LDFLAGS_MAINT_APPEND= -Wl,--as-needed
+
+export CMAKE_CXX_FLAGS=$(CXXFLAGS) $(CPPFLAGS)
+export DEB_CFLAGS_MAINT_APPEND= -g
+export ANT_OPTS=-D"file.encoding=UTF-8"
+
+%:
+	dh $@ --parallel --max-parallel=4 --with javahelper
+
+override_dh_auto_clean:
+	cd java/pbrpcgen && ant clean
+	$(RM) -rvf \
+            cpp/thirdparty/gtest \
+            cpp/thirdparty/gtest-* \
+            cpp/thirdparty/protobuf-* \
+            java/lib/protobuf-java-*.jar \
+            java/lib/commons-codec-*.jar \
+            java/servers/xtreemos/bcprov-*.jar \
+            java/lib/test/junit-*.jar
+	dh_auto_clean
+
+override_dh_auto_build:
+	## re-build cpp/generated stuff:
+	cd java/pbrpcgen && ant
+	make -C interface
+	## copy gtest sources
+	cp -Rv /usr/src/gtest cpp/thirdparty/
+	dh_auto_build
+
+override_dh_auto_test:
+	#-dh_auto_test
+
+override_dh_compress:
+	dh_compress --exclude=.properties

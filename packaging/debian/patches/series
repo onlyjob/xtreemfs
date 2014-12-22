@@ -1,0 +1,5 @@
+cmake.patch
+ftbfs-missing-mode.patch
+init.patch
+man.patch
+unbundle-java.patch

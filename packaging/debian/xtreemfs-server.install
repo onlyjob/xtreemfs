@@ -1,0 +1,5 @@
+debian/tmp/etc/init.d
+usr/share/xtreemfs/xtreemfs-osd-farm
+etc/xos/xtreemfs/generate_uuid    /usr/share/xtreemfs/
+etc/xos/xtreemfs/server-repl-plugin
+etc/xos/xtreemfs/*.properties

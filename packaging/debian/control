@@ -1,0 +1,72 @@
+Source: xtreemfs
+Maintainer: Debian Java Maintainers <pkg-java-maintainers@lists.alioth.debian.org>
+Uploaders: Dmitry Smirnov <onlyjob@debian.org>
+Section: utils
+Priority: optional
+Build-Depends: debhelper (>= 9) ,ant ,javahelper
+              ,cmake
+              ,libattr1-dev
+              ,libboost-dev
+              ,libboost-program-options-dev
+              ,libboost-regex-dev
+              ,libboost-system-dev
+              ,libboost-thread-dev
+              ,libfuse-dev
+              ,libgtest-dev (>= 1.5.0)
+              ,libjsoncpp-dev
+              ,libssl-dev
+              ,libprotobuf-dev (>= 2.5.0)
+              ,protobuf-compiler
+Build-Depends-Indep: default-jdk
+                    ,libbcprov-java
+                    ,libcommons-codec-java
+                ,libcommons-httpclient-java
+                    ,libprotobuf-java (>= 2.5.0)
+                ,libhamcrest-java
+                    ,junit4
+Standards-Version: 3.9.6
+Homepage: http://www.xtreemfs.org/
+
+Package: xtreemfs-client
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends}
+#        ,fuse (>= 2.6)
+Description: XtreemFS client utilities
+ XtreemFS is a distributed and replicated file system for the Internet.
+ .
+ This package contains the XtreemFS client module.
+
+Package: xtreemfs-backend
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends}
+        ,default-jre-headless | java-runtime-headless
+        ,libprotobuf-java
+        ,libcommons-codec-java
+#        ,libcommons-httpclient-java
+Description: XtreemFS server -- common files
+ XtreemFS is a distributed and replicated file system for the Internet.
+ .
+ This package contains the backend modules and libraries shared between the
+ server and tools sub-packages.
+
+Package: xtreemfs-server
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends},
+         xtreemfs-backend (= ${binary:Version}),
+         default-jre-headless | java-runtime-headless,
+         uuid-runtime
+Description: XtreemFS server daemons
+ XtreemFS is a distributed and replicated file system for the Internet.
+ .
+ This package contains the XtreemFS server components (DIR, MRC, OSD).
+
+Package: xtreemfs-tools
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${java:Depends},
+         xtreemfs-backend (= ${binary:Version}),
+         attr,
+         default-jre-headless | java-runtime-headless
+Description: XtreemFS administration tools
+ XtreemFS is a distributed and replicated file system for the Internet.
+ .
+ This package contains XtreemFS administration tools.
